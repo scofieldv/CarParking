@@ -1,0 +1,86 @@
+#This program operates like a car parking system.
+
+import time
+from datetime import datetime
+space = 100
+ticket = 1000
+ticketList = []
+timeList = []
+remainList = []
+charge = []
+overstay = 0
+start = time.clock()
+while True:
+    while True:
+        try:
+            ask1 = int(input("1.In\n\n2.Out\n\n"))
+            break
+        except ValueError: 
+            print('\n\nYou can input only 1 or 2\n\n')
+    if not(ask1 == 'hello'):
+        end = time.clock()
+        now = datetime.now()
+        currentTime = int(now.strftime("%H"))*3600+int(now.strftime("%M"))*60+int(now.strftime("%S"))
+        if end-start >= 86400-currentTime:
+            space = 100
+            ticket = 1000
+            ticketList = []
+            timeList = []
+            remainList = []
+            charge = []
+            overstay = 0
+            start = time.time()
+    if ask1 == 1:
+        if space > 0:
+            print("Empty Space :",space,"left\n")
+            print("Ticket Number :",ticket,"\n")
+            ticketList.append(ticket)
+            ticket = ticket + 1
+            print("Current date/time :",datetime.now(),"\n")
+            timeList.append(time.time())
+            print("If you stay more than 8 hours, you will have to charge an extra 100$\n\n")
+            space = space - 1
+        else:
+            print("\n\nNo more space\n\n")
+    if ask1 == 2:
+        while True:
+            c = 0
+            try:
+                ask2 = int(input("\nInput your ticket number\n\n"))
+                for i in range(len(ticketList)):
+                    if ticketList[i] == ask2:
+                        c = 1
+                if c == 1:
+                    break
+                else:
+                    print('\n\nWrong ticket number, type again\n\n')
+            except ValueError:
+                print('\n\nWrong ticket number, type again\n\n')
+        remainSS = time.time() - timeList[ask2-1000]
+        remainH = (remainSS - (remainSS%3600))/3600
+        remainM = ((remainSS%3600) - remainSS%60)/60
+        remainS = remainSS - 3600*remainH - 60*remainM
+        print(remainH,"H",remainM,"Min",remainS,"S\n")
+        print("Charge :", (remainH+1)*1.5,"$\n")
+        if remainH < 8:
+            charge.append((remainH+1)*1.5)
+        else:
+            charge.append((remainH+1)*1.5+100)
+            overstay = overstay + 1
+        remainList.append(remainSS)
+        ticketList[ask2-1000] = 0
+        space = space + 1
+        print("Empty Space :",space,"left\n")
+    if not(ask1 ==1 or ask1 == 2):
+        print('\n\nYou can input only 1 or 2\n\n')
+if not(len(charge) == 0):
+    print("\n\n\nTotal Daily Taking :",sum(charge),"$\n")
+    print("Number of Cars :", len(charge),"\n")
+    print("Average Charge per Car :", sum(charge)/len(charge),"$\n")
+    averageLen = sum(remainList)/len(remainList)
+    remainH = (averageLen - (averageLen%3600))/3600
+    remainM = ((averageLen%3600) - averageLen%60)/60
+    remainS = averageLen - 3600*remainH - 60*remainM
+    print("Average Length of Stay per Car :",remainH,"H",remainM,"Min",remainS,"S\n")
+    print(overstay,"Cars Overstayed\n")
+ 
